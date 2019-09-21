@@ -1,0 +1,3 @@
+# goreo
+
+Go release tool
