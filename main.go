@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
+	"github.com/saromanov/goreo/internal/builder"
 	"github.com/urfave/cli"
 )
 
@@ -23,7 +23,7 @@ func main() {
 
 	app.Action = func(c *cli.Context) error {
 		if c.Bool(release) {
-			fmt.Println("RELEASE")
+			builder.Build()
 		}
 		return nil
 	}
