@@ -23,7 +23,7 @@ func main() {
 
 	app.Action = func(c *cli.Context) error {
 		if c.Bool(release) {
-			builder.Build()
+			builder.Build(nil)
 		}
 		return nil
 	}

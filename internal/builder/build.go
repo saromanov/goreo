@@ -1,20 +1,33 @@
 package builder
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 
 	"github.com/pkg/errors"
+	"github.com/saromanov/goreo/internal/config"
 )
 
 // Build provides building of the project
-func Build() error {
-	if err := buildToArch("linux", "amd64"); err != nil {
-		return err
+func Build(c *config.Build) error {
+	archs := []string{"linux", "windows"}
+	platforms := []string{"amd64"}
+
+	if c != nil && len(c.Archs) > 0 {
+		archs = c.Archs
 	}
-	if err := buildToArch("windows", "amd64"); err != nil {
-		return err
+	if c != nil && len(c.Platforms) > 0 {
+		platforms = c.Platforms
+	}
+
+	for _, a := range archs {
+		for _, p := range platforms {
+			if err := buildToArch(a, p); err != nil {
+				return errors.Wrap(err, fmt.Sprintf("unable to build %s to the platform %s", a, p))
+			}
+		}
 	}
 	return nil
 }
