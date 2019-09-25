@@ -9,4 +9,5 @@ type Config struct {
 type Build struct {
 	Archs     []string `yaml:"archs"`
 	Platforms []string `yaml:"platforms"`
+	Version   string   `yaml:"version"`
 }
