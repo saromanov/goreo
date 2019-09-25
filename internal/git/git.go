@@ -1,9 +1,10 @@
 package git
 
-type Git struct {
-	Path string
-	Release string
-}
+import (
+	"os/exec"
+
+	"github.com/pkg/errors"
+)
 
 func Publish(tag string) error {
 	err := exec.Command("git", "push", "origin", tag).Run()
