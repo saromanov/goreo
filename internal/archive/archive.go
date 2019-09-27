@@ -1,76 +1,31 @@
 package archive
 
 import (
-	"archive/zip"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
+	"github.com/pierrre/archivefile/zip"
 	"github.com/pkg/errors"
 )
 
 // addRepoToZip provides adding of the repository to the
 // zip archive
 func addRepoToZip(path string) error {
-	files, err := ioutil.ReadDir(path)
+	tmpDir, err := ioutil.TempDir("", "test_zip")
 	if err != nil {
-		return errors.Wrap("unable to get list of files", err)
+		panic(err)
 	}
+	defer func() {
+		_ = os.RemoveAll(tmpDir)
+	}()
 
-	fileNames := []string{}
-	for _, f := range files {
-		fileNames = append(files, f.Name())
-	}
-
-	rootDirectory := filepath.Parent(path)
-	return zipFiles(rootDirectory, files)
-}
-
-func zipFiles(filename string, files []string) error {
-
-	newZipFile, err := os.Create(filename)
+	outFilePath := filepath.Join(tmpDir, fmt.Sprintf("%s.zip", "release"))
+	err = zip.ArchiveFile(path, outFilePath, func(archivePath string) {
+	})
 	if err != nil {
-		return err
-	}
-	defer newZipFile.Close()
-
-	zipWriter := zip.NewWriter(newZipFile)
-	defer zipWriter.Close()
-
-	// Add files to zip
-	for _, file := range files {
-		if err = addFileToZip(zipWriter, file); err != nil {
-			return err
-		}
+		return errors.Wrap(err, "unable to archive file")
 	}
 	return nil
-}
-
-func addFileToZip(zipWriter *zip.Writer, filename string) error {
-
-	fileToZip, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer fileToZip.Close()
-
-	info, err := fileToZip.Stat()
-	if err != nil {
-		return err
-	}
-
-	header, err := zip.FileInfoHeader(info)
-	if err != nil {
-		return err
-	}
-	header.Name = filename
-	header.Method = zip.Deflate
-
-	writer, err := zipWriter.CreateHeader(header)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(writer, fileToZip)
-	return err
 }
