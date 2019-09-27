@@ -10,9 +10,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// addRepoToZip provides adding of the repository to the
+// Run provides adding of the repository to the
 // zip archive
-func addRepoToZip(path string) error {
+func Run(path string) error {
 	tmpDir, err := ioutil.TempDir("", "test_zip")
 	if err != nil {
 		panic(err)

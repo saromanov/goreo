@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/saromanov/goreo/internal/builder"
+	"github.com/saromanov/goreo/internal/pipeline"
 	"github.com/urfave/cli"
 )
 
@@ -23,6 +24,7 @@ func main() {
 
 	app.Action = func(c *cli.Context) error {
 		if c.Bool(release) {
+			pipeline.New(nil)
 			builder.Build(nil)
 		}
 		return nil
