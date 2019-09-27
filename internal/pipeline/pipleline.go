@@ -7,19 +7,19 @@ import (
 	"github.com/saromanov/goreo/internal/config"
 )
 
-type Pipleline struct {
+type Pipeline struct {
 	conf *config.Config
 }
 
 // New initialize new pipleline
-func New(c *config.Config) *Pipleline {
-	return &Pipleline{
+func New(c *config.Config) *Pipeline {
+	return &Pipeline{
 		conf: c,
 	}
 }
 
 // Run provides executing of the builder
-func Run() error {
+func (p *Pipeline) Run() error {
 	if err := archive.Run("."); err != nil {
 		return errors.Wrap(err, "unable to archive files")
 	}
@@ -27,4 +27,6 @@ func Run() error {
 	if err := builder.Run(nil); err != nil {
 		return errors.Wrap(err, "unable to apply build")
 	}
+
+	return nil
 }

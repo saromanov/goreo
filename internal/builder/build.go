@@ -10,8 +10,8 @@ import (
 	"github.com/saromanov/goreo/internal/config"
 )
 
-// Build provides building of the project
-func Build(c *config.Build) error {
+// Run provides building of the project
+func Run(c *config.Build) error {
 	archs := []string{"linux", "windows"}
 	platforms := []string{"amd64"}
 
