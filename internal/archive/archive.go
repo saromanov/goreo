@@ -2,9 +2,30 @@ package archive
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+
+	"github.com/pkg/errors"
 )
+
+// addRepoToZip provides adding of the repository to the
+// zip archive
+func addRepoToZip(path string) error {
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		return errors.Wrap("unable to get list of files", err)
+	}
+
+	fileNames := []string{}
+	for _, f := range files {
+		fileNames = append(files, f.Name())
+	}
+
+	rootDirectory := filepath.Parent(path)
+	return zipFiles(rootDirectory, files)
+}
 
 func zipFiles(filename string, files []string) error {
 
