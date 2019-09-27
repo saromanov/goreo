@@ -20,7 +20,7 @@ func New(c *config.Config) *Pipeline {
 
 // Run provides executing of the builder
 func (p *Pipeline) Run() error {
-	if err := archive.Run("."); err != nil {
+	if err := archive.Run("./"); err != nil {
 		return errors.Wrap(err, "unable to archive files")
 	}
 
