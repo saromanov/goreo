@@ -9,14 +9,13 @@ import (
 
 // Run provides adding of the repository to the
 // zip archive
-func Run(path string) error {
-	err := os.MkdirAll("../test_zip", os.ModePerm)
+func Run(path string, targetPath, fileName string) error {
+	err := os.MkdirAll(targetPath, os.ModePerm)
 	if err != nil {
 		return errors.Wrap(err, "unable to make temp dir")
 	}
 
-	//outFilePath := filepath.Join(tmpDir, fmt.Sprintf("%s.zip", "release"))
-	err = zip.ArchiveFile(path, "../release.zip", func(archivePath string) {
+	err = zip.ArchiveFile(path, fileName, func(archivePath string) {
 	})
 	if err != nil {
 		return errors.Wrap(err, "unable to archive file")
