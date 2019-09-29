@@ -11,7 +11,8 @@ import (
 )
 
 // Run provides building of the project
-func Run(c *config.Build) error {
+// It output built paths to all binaries
+func Run(c *config.Build) ([]string, error) {
 	archs := []string{"linux", "windows"}
 	platforms := []string{"amd64"}
 
@@ -25,18 +26,19 @@ func Run(c *config.Build) error {
 	for _, a := range archs {
 		for _, p := range platforms {
 			if err := buildToArch(a, p); err != nil {
-				return errors.Wrap(err, fmt.Sprintf("unable to build %s to the platform %s", a, p))
+				return nil, errors.Wrap(err, fmt.Sprintf("unable to build %s to the platform %s", a, p))
 			}
 		}
 	}
-	return nil
+	return []string{}, nil
 }
 
 // buildToArch provides building of the go package to the specific platform
 func buildToArch(osName, platformName string) error {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
-	err := exec.Command("go", "build", "-o", filepath.Dir(".")).Run()
+	binaryName := fmt.Sprintf("%s_%s_%s.%s", filepath.Dir("."), osName, platformName)
+	err := exec.Command("go", "build", "-o", binaryName).Run()
 	if err != nil {
 		return errors.Wrap(err, "unable to execute go build")
 	}

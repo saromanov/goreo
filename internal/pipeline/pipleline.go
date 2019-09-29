@@ -20,12 +20,16 @@ func New(c *config.Config) *Pipeline {
 
 // Run provides executing of the builder
 func (p *Pipeline) Run() error {
-	if err := builder.Run(nil); err != nil {
+	names, err := builder.Run(nil)
+	if err != nil {
 		return errors.Wrap(err, "unable to apply build")
 	}
-	
-	if err := archive.Run("./"); err != nil {
-		return errors.Wrap(err, "unable to archive files")
+
+	for _, name := range names {
+		if err := archive.Run("./", name, "release.zip"); err != nil {
+			return errors.Wrap(err, "unable to archive files")
+		}
+
 	}
 
 	return nil
