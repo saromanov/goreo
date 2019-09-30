@@ -37,7 +37,7 @@ func Run(c *config.Build) ([]string, error) {
 func buildToArch(osName, platformName string) error {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
-	binaryName := fmt.Sprintf("%s_%s_%s.%s", filepath.Dir("."), osName, platformName)
+	binaryName := fmt.Sprintf("%s_%s_%s", filepath.Dir("."), osName, platformName)
 	err := exec.Command("go", "build", "-o", binaryName).Run()
 	if err != nil {
 		return errors.Wrap(err, "unable to execute go build")
