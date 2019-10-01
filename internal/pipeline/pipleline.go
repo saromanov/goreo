@@ -1,6 +1,8 @@
 package pipeline
 
 import (
+	"path/filepath"
+
 	"github.com/pkg/errors"
 	"github.com/saromanov/goreo/internal/archive"
 	"github.com/saromanov/goreo/internal/builder"
@@ -26,7 +28,8 @@ func (p *Pipeline) Run() error {
 	}
 
 	for _, name := range names {
-		if err := archive.Run("./", name, "release.zip"); err != nil {
+		fileName := filepath.Base(name)
+		if err := archive.Run("./", name, fileName); err != nil {
 			return errors.Wrap(err, "unable to archive files")
 		}
 
