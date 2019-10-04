@@ -22,7 +22,7 @@ func New(c *config.Config) *Pipeline {
 
 // Run provides executing of the builder
 func (p *Pipeline) Run() error {
-	names, err := builder.Run(nil)
+	names, err := builder.Run(p.conf.GetBuild())
 	if err != nil {
 		return errors.Wrap(err, "unable to apply build")
 	}
