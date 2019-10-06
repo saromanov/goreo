@@ -23,24 +23,27 @@ func Run(c *config.Build) ([]string, error) {
 		platforms = c.Platforms
 	}
 
+	names := []string{}
 	for _, a := range archs {
 		for _, p := range platforms {
+			name, err := buildToArch(a, p)
 			if err := buildToArch(a, p); err != nil {
 				return nil, errors.Wrap(err, fmt.Sprintf("unable to build %s to the platform %s", a, p))
 			}
+			names = append(names, name)
 		}
 	}
-	return []string{}, nil
+	return names, nil
 }
 
 // buildToArch provides building of the go package to the specific platform
-func buildToArch(osName, platformName string) error {
+func buildToArch(osName, platformName string) (string, error {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
 	binaryName := fmt.Sprintf("%s_%s_%s", filepath.Dir("."), osName, platformName)
 	err := exec.Command("go", "build", "-o", binaryName).Run()
 	if err != nil {
-		return errors.Wrap(err, "unable to execute go build")
+		return "", errors.Wrap(err, "unable to execute go build")
 	}
-	return nil
+	return binaryname, nil
 }
