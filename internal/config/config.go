@@ -2,7 +2,8 @@ package config
 
 // Config defines configuration for builders
 type Config struct {
-	build *Build
+	build   *Build
+	publish *Publish
 }
 
 func (c *Config) GetBuild() *Build {
@@ -12,9 +13,19 @@ func (c *Config) GetBuild() *Build {
 	return c.build
 }
 
+func (c *Config) GetPublish() *Publish {
+	if c.publish == nil {
+		return &Publish{}
+	}
+	return c.publish
+}
+
 // Build defines configuration for the build
 type Build struct {
 	Archs     []string `yaml:"archs"`
 	Platforms []string `yaml:"platforms"`
 	Version   string   `yaml:"version"`
+}
+
+type Publish struct {
 }
