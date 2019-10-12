@@ -33,4 +33,5 @@ type Build struct {
 }
 
 type Publish struct {
+	Description string `json:"description"`
 }
