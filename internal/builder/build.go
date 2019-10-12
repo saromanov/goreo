@@ -8,6 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/saromanov/goreo/internal/config"
+	"github.com/saromanov/goreo/internal/git"
 )
 
 // Run provides building of the project
@@ -26,7 +27,7 @@ func Run(c *config.Build) ([]string, error) {
 	names := []string{}
 	for _, a := range archs {
 		for _, p := range platforms {
-			name, err := buildToArch(c.Name, a, p)
+			name, err := buildToArch(c.Name, a, p, c.Snapshot)
 			if err != nil {
 				return nil, errors.Wrap(err, fmt.Sprintf("unable to build %s to the platform %s", a, p))
 			}
@@ -37,14 +38,18 @@ func Run(c *config.Build) ([]string, error) {
 }
 
 // buildToArch provides building of the go package to the specific platform
-func buildToArch(projectName, osName, platformName string) (string, error) {
+func buildToArch(projectName, osName, platformName string, snapshot bool) (string, error) {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
 	name, err := getProjectName(projectName)
 	if err != nil {
 		return "", errors.Wrap(err, "unable to get project name")
 	}
+	fmt.Println(git.GetLastCommitID())
 	binaryName := fmt.Sprintf("%s_%s_%s", name, osName, platformName)
+	if snapshot {
+		binaryName = fmt.Sprintf("%s_%s_%s_%s", name, osName, "23", platformName)
+	}
 	err = exec.Command("go", "build", "-o", binaryName).Run()
 	if err != nil {
 		return "", errors.Wrap(err, "unable to execute go build")

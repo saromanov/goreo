@@ -14,3 +14,13 @@ func Publish(tag string) error {
 	}
 	return nil
 }
+
+// GetLastCommitID return id of the last commit
+func GetLastCommitID() (string, error) {
+	cmd := exec.Command("git", "log", "--format=%H", "-n", "1")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", errors.Wrap(err, "unable to execute command")
+	}
+	return string(out), nil
+}

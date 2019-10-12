@@ -26,6 +26,7 @@ func (c *Config) GetPublish() *Publish {
 // Build defines configuration for the build
 type Build struct {
 	Name      string   `yaml:"name"`
+	Snapshot  bool     `yaml:"snapshot"`
 	Archs     []string `yaml:"archs"`
 	Platforms []string `yaml:"platforms"`
 	Version   string   `yaml:"version"`
