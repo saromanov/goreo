@@ -26,7 +26,7 @@ func Run(c *config.Build) ([]string, error) {
 	names := []string{}
 	for _, a := range archs {
 		for _, p := range platforms {
-			name, err := buildToArch(a, p)
+			name, err := buildToArch(c.Name, a, p)
 			if err != nil {
 				return nil, errors.Wrap(err, fmt.Sprintf("unable to build %s to the platform %s", a, p))
 			}
@@ -37,9 +37,28 @@ func Run(c *config.Build) ([]string, error) {
 }
 
 // buildToArch provides building of the go package to the specific platform
-func buildToArch(osName, platformName string) (string, error) {
+func buildToArch(projectName, osName, platformName string) (string, error) {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
+	name, err := getProjectName(projectName)
+	if err != nil {
+		return "", errors.Wrap(err, "unable to get project name")
+	}
+	binaryName := fmt.Sprintf("%s_%s_%s", name, osName, platformName)
+	err = exec.Command("go", "build", "-o", binaryName).Run()
+	if err != nil {
+		return "", errors.Wrap(err, "unable to execute go build")
+	}
+	return binaryName, nil
+}
+
+// if project name is not defined, then
+// get name of the working directory
+func getProjectName(projectName string) (string, error) {
+	if projectName != "" {
+		return projectName, nil
+	}
+
 	dirPath, err := os.Getwd()
 	if err != nil {
 		return "", errors.Wrap(err, "unable to get directory name")
@@ -48,10 +67,6 @@ func buildToArch(osName, platformName string) (string, error) {
 	if len(splitDirs) > 0 {
 		dirPath = splitDirs[len(splitDirs)-1]
 	}
-	binaryName := fmt.Sprintf("%s_%s_%s", dirPath, osName, platformName)
-	err = exec.Command("go", "build", "-o", binaryName).Run()
-	if err != nil {
-		return "", errors.Wrap(err, "unable to execute go build")
-	}
-	return binaryName, nil
+
+	return dirPath, nil
 }
