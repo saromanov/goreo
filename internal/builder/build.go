@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/saromanov/goreo/internal/config"
@@ -40,8 +40,16 @@ func Run(c *config.Build) ([]string, error) {
 func buildToArch(osName, platformName string) (string, error) {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
-	binaryName := fmt.Sprintf("%s_%s_%s", filepath.Dir("."), osName, platformName)
-	err := exec.Command("go", "build", "-o", binaryName).Run()
+	dirPath, err := os.Getwd()
+	if err != nil {
+		return "", errors.Wrap(err, "unable to get directory name")
+	}
+	splitDirs := strings.Split(dirPath, "/")
+	if len(splitDirs) > 0 {
+		dirPath = splitDirs[len(splitDirs)-1]
+	}
+	binaryName := fmt.Sprintf("%s_%s_%s", dirPath, osName, platformName)
+	err = exec.Command("go", "build", "-o", binaryName).Run()
 	if err != nil {
 		return "", errors.Wrap(err, "unable to execute go build")
 	}
