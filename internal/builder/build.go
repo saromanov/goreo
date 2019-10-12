@@ -41,14 +41,9 @@ func Run(c *config.Build) ([]string, error) {
 func buildToArch(projectName, osName, platformName string, snapshot bool) (string, error) {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
-	name, err := getProjectName(projectName)
+	binaryName, err := createProjectName(projectName, osName, platformName, snapshot)
 	if err != nil {
-		return "", errors.Wrap(err, "unable to get project name")
-	}
-	fmt.Println(git.GetLastCommitID())
-	binaryName := fmt.Sprintf("%s_%s_%s", name, osName, platformName)
-	if snapshot {
-		binaryName = fmt.Sprintf("%s_%s_%s_%s", name, osName, "23", platformName)
+		return "", errors.Wrap(err, "unable to create project name")
 	}
 	err = exec.Command("go", "build", "-o", binaryName).Run()
 	if err != nil {
@@ -74,4 +69,21 @@ func getProjectName(projectName string) (string, error) {
 	}
 
 	return dirPath, nil
+}
+
+func createProjectName(projectName, osName, platformName string, snapshot bool) (string, error) {
+	name, err := getProjectName(projectName)
+	if err != nil {
+		return "", errors.Wrap(err, "unable to get project name")
+	}
+	binaryName := fmt.Sprintf("%s_%s_%s", name, osName, platformName)
+	if snapshot {
+		commit, err := git.GetLastCommitID()
+		if err != nil {
+			return "", err
+		}
+		binaryName = fmt.Sprintf("%s_%s_%s_%s", name, osName, commit, platformName)
+	}
+
+	return binaryName, nil
 }
