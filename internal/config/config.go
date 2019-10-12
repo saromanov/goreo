@@ -7,6 +7,9 @@ type Config struct {
 }
 
 func (c *Config) GetBuild() *Build {
+	if c == nil {
+		return &Build{}
+	}
 	if c.build == nil {
 		return &Build{}
 	}
