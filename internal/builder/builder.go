@@ -17,6 +17,7 @@ func Run(c *config.Build) ([]string, error) {
 	archs := []string{"linux", "windows"}
 	platforms := []string{"amd64"}
 
+	setEnvironmentVariables(c.Envs)
 	if c != nil && len(c.Archs) > 0 {
 		archs = c.Archs
 	}
@@ -86,4 +87,11 @@ func createProjectName(projectName, osName, platformName string, snapshot bool) 
 	}
 
 	return binaryName, nil
+}
+
+// setting list of environment variables before the build
+func setEnvironmentVariables(vars map[string]interface{}) {
+	for k, v := range vars {
+		os.Setenv(k, v.(string))
+	}
 }
