@@ -31,6 +31,7 @@ type Build struct {
 	Archs     []string               `yaml:"archs"`
 	Platforms []string               `yaml:"platforms"`
 	Version   string                 `yaml:"version"`
+	Goarm     []string               `yaml:"goarm"`
 }
 
 type Publish struct {

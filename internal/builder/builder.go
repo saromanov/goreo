@@ -16,6 +16,7 @@ import (
 func Run(c *config.Build) ([]string, error) {
 	archs := []string{"linux", "windows"}
 	platforms := []string{"amd64"}
+	goarmVersions := []string{"6"}
 
 	setEnvironmentVariables(c.Envs)
 	if c != nil && len(c.Archs) > 0 {
@@ -24,6 +25,10 @@ func Run(c *config.Build) ([]string, error) {
 	if c != nil && len(c.Platforms) > 0 {
 		platforms = c.Platforms
 	}
+	if c != nil && len(c.Goarm) > 0 {
+		goarmVersions = c.Goarm
+	}
+	fmt.Println(goarmVersions)
 
 	names := []string{}
 	for _, a := range archs {
