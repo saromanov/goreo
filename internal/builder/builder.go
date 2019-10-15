@@ -28,10 +28,12 @@ func Run(c *config.Build) ([]string, error) {
 	if c != nil && len(c.Goarm) > 0 {
 		goarmVersions = c.Goarm
 	}
-	fmt.Println(goarmVersions)
 
 	names := []string{}
 	for _, a := range archs {
+		if a == "arm" && len(goarmVersions) > 0 {
+			os.Setenv("GOOS", goarmVersions[0])
+		}
 		for _, p := range platforms {
 			name, err := buildToArch(c.Name, a, p, c.Snapshot)
 			if err != nil {
