@@ -2,8 +2,9 @@ package config
 
 // Config defines configuration for builders
 type Config struct {
-	build   *Build
-	publish *Publish
+	build   *Build   `yaml:"build"`
+	publish *Publish `yaml:"publish"`
+	archive *Archive `yaml:"archive"`
 }
 
 func (c *Config) GetBuild() *Build {
@@ -35,5 +36,10 @@ type Build struct {
 }
 
 type Publish struct {
-	Description string `json:"description"`
+	Description string `yaml:"description"`
+}
+
+type Archive struct {
+	Files []string `yaml:"files"`
+	Name  string   `yaml:"name"`
 }
