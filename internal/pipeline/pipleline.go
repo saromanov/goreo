@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
@@ -36,4 +37,9 @@ func (p *Pipeline) Run() error {
 	}
 
 	return nil
+}
+
+func makeArchive(name string, c *config.Config) error {
+	archive := c.GetArchive()
+	return os.Mkdir(name, 777)
 }

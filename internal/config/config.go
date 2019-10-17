@@ -24,6 +24,13 @@ func (c *Config) GetPublish() *Publish {
 	return c.publish
 }
 
+func (c *Config) GetArchive() *Archive {
+	if c.archive == nil {
+		return &Archive{}
+	}
+	return c.archive
+}
+
 // Build defines configuration for the build
 type Build struct {
 	Name      string                 `yaml:"name"`
