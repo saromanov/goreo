@@ -40,6 +40,14 @@ func (p *Pipeline) Run() error {
 }
 
 func makeArchive(name string, c *config.Config) error {
-	archive := c.GetArchive()
-	return os.Mkdir(name, 777)
+	archiveConf := c.GetArchive()
+	if err := os.Mkdir(name, 777); err != nil {
+		return err
+	}
+	fileName := filepath.Base(name)
+	if err := archive.Run("./", name, fileName); err != nil {
+		return errors.Wrap(err, "unable to archive files")
+	}
+
+	return nil
 }
