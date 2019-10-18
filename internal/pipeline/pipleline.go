@@ -30,11 +30,9 @@ func (p *Pipeline) Run() error {
 	}
 
 	for _, name := range names {
-		fileName := filepath.Base(name)
-		if err := archive.Run("./", name, fileName); err != nil {
+		if err := makeArchive(name, p.conf); err != nil {
 			return errors.Wrap(err, "unable to archive files")
 		}
-
 	}
 
 	return nil
@@ -71,7 +69,7 @@ func copyFile(fileName, dest string) error {
 	}
 	defer destFile.Close()
 
-	_, err = io.Copy(destFile, srcFile) // check first var for number of bytes copied
+	_, err = io.Copy(destFile, srcFile)
 	if err != nil {
 		return err
 	}
