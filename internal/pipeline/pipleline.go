@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 
@@ -45,8 +46,39 @@ func makeArchive(name string, c *config.Config) error {
 		return err
 	}
 	fileName := filepath.Base(name)
+	if len(archiveConf.Files) > 0 {
+		for _, fileName := range archiveConf.Files {
+			copyFile(fileName, "../")
+		}
+	}
 	if err := archive.Run("./", name, fileName); err != nil {
 		return errors.Wrap(err, "unable to archive files")
+	}
+
+	return nil
+}
+
+func copyFile(fileName, dest string) error {
+	srcFile, err := os.Open(fileName)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	destFile, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	_, err = io.Copy(destFile, srcFile) // check first var for number of bytes copied
+	if err != nil {
+		return err
+	}
+
+	err = destFile.Sync()
+	if err != nil {
+		return err
 	}
 
 	return nil
