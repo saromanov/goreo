@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"io/ioutil"
 
 	"gopkg.in/yaml.v2"
@@ -8,9 +9,9 @@ import (
 
 // Config defines configuration for builders
 type Config struct {
-	build   *Build   `yaml:"build"`
-	publish *Publish `yaml:"publish"`
-	archive *Archive `yaml:"archive"`
+	Build   *Build   `yaml:"build"`
+	Publish *Publish `yaml:"publish"`
+	Archive *Archive `yaml:"archive"`
 }
 
 // Unmarshal provides unmarshaling of the config
@@ -24,6 +25,7 @@ func Unmarshal(path string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("CONF: ", conf)
 	return conf, nil
 }
 
@@ -31,24 +33,24 @@ func (c *Config) GetBuild() *Build {
 	if c == nil {
 		return &Build{}
 	}
-	if c.build == nil {
+	if c.Build == nil {
 		return &Build{}
 	}
-	return c.build
+	return c.Build
 }
 
 func (c *Config) GetPublish() *Publish {
-	if c.publish == nil {
+	if c.Publish == nil {
 		return &Publish{}
 	}
-	return c.publish
+	return c.Publish
 }
 
 func (c *Config) GetArchive() *Archive {
-	if c.archive == nil {
+	if c.Archive == nil {
 		return &Archive{}
 	}
-	return c.archive
+	return c.Archive
 }
 
 // Build defines configuration for the build

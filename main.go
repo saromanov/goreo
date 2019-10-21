@@ -24,7 +24,7 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) error {
-		conf, err := config.Unmarshal("config.yaml")
+		conf, err := config.Unmarshal("goreo.yml")
 		if err != nil {
 			return fmt.Errorf("unable to unmarshal config: %v", err)
 		}
