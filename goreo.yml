@@ -1,2 +1,3 @@
 build:
   name: goreo
+  snapshot: true

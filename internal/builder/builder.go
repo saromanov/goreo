@@ -64,7 +64,7 @@ func createProjectName(projectName, osName, platformName string, snapshot bool) 
 	if snapshot {
 		commit, err := git.GetLastCommitID()
 		if err != nil {
-			return "", err
+			return "", errors.Wrap(err, "unable to get last commit id")
 		}
 		binaryName = fmt.Sprintf("%s_%s_%s_%s", projectName, osName, commit, platformName)
 	}

@@ -11,9 +11,10 @@ import (
 
 // Config defines configuration for builders
 type Config struct {
-	Build   *Build   `yaml:"build"`
-	Publish *Publish `yaml:"publish"`
-	Archive *Archive `yaml:"archive"`
+	Build    *Build    `yaml:"build"`
+	Publish  *Publish  `yaml:"publish"`
+	Archive  *Archive  `yaml:"archive"`
+	Checksum *Checksum `yaml:"checksum"`
 }
 
 // Unmarshal provides unmarshaling of the config
@@ -27,7 +28,6 @@ func Unmarshal(path string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("CONF: ", conf)
 	return conf, nil
 }
 
@@ -95,4 +95,9 @@ type Publish struct {
 type Archive struct {
 	Files []string `yaml:"files"`
 	Name  string   `yaml:"name"`
+}
+
+type Checksum struct {
+	Name      string `yaml:"name"`
+	Algorithm string `yaml:"algorithm"`
 }
