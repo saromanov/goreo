@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/saromanov/goreo/internal/config"
@@ -60,37 +59,14 @@ func buildToArch(projectName, osName, platformName string, snapshot bool) (strin
 	return binaryName, nil
 }
 
-// if project name is not defined, then
-// get name of the working directory
-func getProjectName(projectName string) (string, error) {
-	if projectName != "" {
-		return projectName, nil
-	}
-
-	dirPath, err := os.Getwd()
-	if err != nil {
-		return "", errors.Wrap(err, "unable to get directory name")
-	}
-	splitDirs := strings.Split(dirPath, "/")
-	if len(splitDirs) > 0 {
-		dirPath = splitDirs[len(splitDirs)-1]
-	}
-
-	return dirPath, nil
-}
-
 func createProjectName(projectName, osName, platformName string, snapshot bool) (string, error) {
-	name, err := getProjectName(projectName)
-	if err != nil {
-		return "", errors.Wrap(err, "unable to get project name")
-	}
-	binaryName := fmt.Sprintf("%s_%s_%s", name, osName, platformName)
+	binaryName := fmt.Sprintf("%s_%s_%s", projectName, osName, platformName)
 	if snapshot {
 		commit, err := git.GetLastCommitID()
 		if err != nil {
 			return "", err
 		}
-		binaryName = fmt.Sprintf("%s_%s_%s_%s", name, osName, commit, platformName)
+		binaryName = fmt.Sprintf("%s_%s_%s_%s", projectName, osName, commit, platformName)
 	}
 
 	return binaryName, nil
