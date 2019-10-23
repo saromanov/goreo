@@ -24,13 +24,13 @@ func New(c *config.Config) *Pipeline {
 
 // Run provides executing of the builder
 func (p *Pipeline) Run() error {
-	names, err := builder.Run(p.conf.GetBuild())
+	names, err := p.getPaths()
 	if err != nil {
 		return errors.Wrap(err, "unable to apply build")
 	}
 
 	for _, name := range names {
-		if err := makeArchive(name, p.conf); err != nil {
+		if err := p.makeArchive(name, p.conf.GetArchive()); err != nil {
 			return errors.Wrap(err, "unable to archive files")
 		}
 	}
@@ -38,8 +38,11 @@ func (p *Pipeline) Run() error {
 	return nil
 }
 
-func makeArchive(name string, c *config.Config) error {
-	archiveConf := c.GetArchive()
+func (p *Pipeline) getPaths() ([]string, error) {
+	return builder.Run(p.conf.GetBuild())
+}
+
+func (p *Pipeline) makeArchive(name string, archiveConf *config.Archive) error {
 	if err := os.Mkdir(name, 777); err != nil {
 		return err
 	}
