@@ -6,6 +6,11 @@ import (
 	"os"
 )
 
+// Calc at this moment provides calculation based on sha 256 check sum
+func Calc(algorithm, path string) ([]byte, error) {
+	return calcSha256(path)
+}
+
 func calcSha256(path string) ([]byte, error) {
 	f, err := os.Open(path)
 	if err != nil {
