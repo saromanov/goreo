@@ -38,6 +38,7 @@ func (p *Pipeline) Run() error {
 	return nil
 }
 
+// return list of paths
 func (p *Pipeline) getPaths() ([]string, error) {
 	return builder.Run(p.conf.GetBuild())
 }
