@@ -30,7 +30,7 @@ func (p *Pipeline) Run() error {
 	}
 
 	for _, name := range names {
-		if err := p.makeArchive(name, p.conf.GetArchive()); err != nil {
+		if err := p.makeArchive(name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
 			return errors.Wrap(err, "unable to archive files")
 		}
 	}
@@ -43,16 +43,20 @@ func (p *Pipeline) getPaths() ([]string, error) {
 	return builder.Run(p.conf.GetBuild())
 }
 
-func (p *Pipeline) makeArchive(name string, archiveConf *config.Archive) error {
+func (p *Pipeline) makeArchive(name string, checksum *config.Checksum, archiveConf *config.Archive) error {
 	if err := os.Mkdir(name, 777); err != nil {
 		return err
 	}
 	fileName := filepath.Base(name)
+	if checksum.Algorithm != "" {
+		archiveConf.Files = append(archiveConf.Files, "checksum.sum")
+	}
 	if len(archiveConf.Files) > 0 {
 		for _, fileName := range archiveConf.Files {
 			copyFile(fileName, "../")
 		}
 	}
+
 	if err := archive.Run("./", name, fileName); err != nil {
 		return errors.Wrap(err, "unable to archive files")
 	}

@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-// Calc at this moment provides calculation based on sha 256 check sum
-func Calc(algorithm, path string) ([]byte, error) {
+// Run at this moment provides calculation based on sha 256 check sum
+func Run(algorithm, path string) ([]byte, error) {
 	return calcSha256(path)
 }
 

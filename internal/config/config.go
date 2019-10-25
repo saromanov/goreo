@@ -77,6 +77,14 @@ func (c *Config) GetArchive() *Archive {
 	return c.Archive
 }
 
+func (c *Config) GetChecksum() *Checksum {
+	if c.Checksum == nil {
+		return &Checksum{}
+	}
+
+	return c.Checksum
+}
+
 // Build defines configuration for the build
 type Build struct {
 	Name      string                 `yaml:"name"`
