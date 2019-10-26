@@ -1,3 +1,5 @@
+before:
+  - go test
 build:
   name: goreo
   snapshot: true

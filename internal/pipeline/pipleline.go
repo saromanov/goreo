@@ -38,6 +38,14 @@ func (p *Pipeline) Run() error {
 	return nil
 }
 
+func (p *Pipeline) executeBefore(commands []string) error {
+	if len(commands) == 0 {
+		return nil
+	}
+
+	return nil
+}
+
 // return list of paths
 func (p *Pipeline) getPaths() ([]string, error) {
 	return builder.Run(p.conf.GetBuild())
