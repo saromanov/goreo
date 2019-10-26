@@ -8,6 +8,9 @@ import (
 
 // Run at this moment provides calculation based on sha 256 check sum
 func Run(algorithm, path string) ([]byte, error) {
+	if algorithm == "" {
+		return nil, nil
+	}
 	return calcSha256(path)
 }
 
