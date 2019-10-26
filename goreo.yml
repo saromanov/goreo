@@ -1,5 +1,6 @@
 before:
   - go test
+  - go mod
 build:
   name: goreo
   snapshot: true

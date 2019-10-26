@@ -1,9 +1,12 @@
 package pipeline
 
 import (
+	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/saromanov/goreo/internal/archive"
@@ -24,6 +27,10 @@ func New(c *config.Config) *Pipeline {
 
 // Run provides executing of the builder
 func (p *Pipeline) Run() error {
+	err := p.executeBefore(p.conf.Before)
+	if err != nil {
+		return err
+	}
 	names, err := p.getPaths()
 	if err != nil {
 		return errors.Wrap(err, "unable to apply build")
@@ -43,6 +50,19 @@ func (p *Pipeline) executeBefore(commands []string) error {
 		return nil
 	}
 
+	for _, c := range commands {
+		commandsSplit := strings.Split(c, " ")
+		if len(commandsSplit) == 0 {
+			continue
+		}
+		cmd := exec.Command(commandsSplit[0], commandsSplit[1:]...)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			return errors.Wrap(err, "unable to execute command")
+		}
+		fmt.Println(string(out))
+
+	}
 	return nil
 }
 
