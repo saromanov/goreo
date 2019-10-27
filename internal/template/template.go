@@ -9,15 +9,17 @@ import (
 
 type Input struct {
 	Name   string
+	Os     string
 	Tag    string
 	Date   string
 	Commit string
 }
 
 // GetName returns current name based on template
-func GetName(tmpl string) (string, error) {
+func GetName(tmpl, osName string) (string, error) {
 	inp := &Input{
 		Name: utils.GetProjectName(),
+		Os:   osName,
 	}
 	t, err := template.New("goreo").Parse(tmpl)
 	if err != nil {

@@ -1,7 +1,6 @@
-before:
-  - go test
+
 build:
-  name: "{{ .Name }}"
+  name: "{{ .Name }}_{{ .Os }}"
   snapshot: true
 checksum:
   name: fun

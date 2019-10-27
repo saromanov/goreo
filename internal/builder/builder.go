@@ -49,11 +49,11 @@ func Run(c *config.Build) ([]string, error) {
 func buildToArch(projectName, osName, platformName string, snapshot bool) (string, error) {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
-	resultName, err := template.GetName(projectName)
+	resultName, err := template.GetName(projectName, osName)
 	if err != nil {
 		return "", errors.Wrap(err, "unable to execute template")
 	}
-	binaryName, err := createProjectName(resultName, osName, platformName, snapshot)
+	binaryName, err := createProjectName(resultName, platformName, snapshot)
 	if err != nil {
 		return "", errors.Wrap(err, "unable to create project name")
 	}
@@ -64,14 +64,14 @@ func buildToArch(projectName, osName, platformName string, snapshot bool) (strin
 	return binaryName, nil
 }
 
-func createProjectName(projectName, osName, platformName string, snapshot bool) (string, error) {
-	binaryName := fmt.Sprintf("%s_%s_%s", projectName, osName, platformName)
+func createProjectName(projectName, platformName string, snapshot bool) (string, error) {
+	binaryName := fmt.Sprintf("%s_%s", projectName, platformName)
 	if snapshot {
 		commit, err := git.GetLastCommitID()
 		if err != nil {
 			return "", errors.Wrap(err, "unable to get last commit id")
 		}
-		binaryName = fmt.Sprintf("%s_%s_%s_%s", projectName, osName, commit, platformName)
+		binaryName = fmt.Sprintf("%s_%s_%s", projectName, commit, platformName)
 	}
 
 	return binaryName, nil
