@@ -45,6 +45,8 @@ func (p *Pipeline) Run() error {
 	return nil
 }
 
+// executeBefore provides executing of the command
+// before start of the pipeline
 func (p *Pipeline) executeBefore(commands []string) error {
 	if len(commands) == 0 {
 		return nil
