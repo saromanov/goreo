@@ -1,6 +1,6 @@
 
 build:
-  name: "{{ .Name }}_{{ .Os }}"
+  name: "{{ .Name }}_{{ .Os }}_{{ .Timestamp }}"
   snapshot: true
 checksum:
   name: fun
