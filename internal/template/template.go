@@ -1,7 +1,7 @@
 package template
 
 import (
-	"os"
+	"bytes"
 	"text/template"
 )
 
@@ -15,14 +15,16 @@ type Input struct {
 // GetName returns current name based on template
 func GetName(tmpl string) (string, error) {
 	inp := &Input{}
-	t, err := template.New("goreao").Parse(tmpl)
-	if err != nil {
-		return "", err
-	}
-	err = t.ExecuteTemplate(os.Stdout, "T", inp)
+	t, err := template.New("goreo").Parse(tmpl)
 	if err != nil {
 		return "", err
 	}
 
-	return "", nil
+	var tmplData bytes.Buffer
+	err = t.Execute(&tmplData, inp)
+	if err != nil {
+		return "", err
+	}
+
+	return tmplData.String(), nil
 }
