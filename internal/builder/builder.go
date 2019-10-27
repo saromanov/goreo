@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/saromanov/goreo/internal/config"
 	"github.com/saromanov/goreo/internal/git"
+	"github.com/saromanov/goreo/internal/template"
 )
 
 // Run provides building of the project
@@ -48,7 +49,11 @@ func Run(c *config.Build) ([]string, error) {
 func buildToArch(projectName, osName, platformName string, snapshot bool) (string, error) {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
-	binaryName, err := createProjectName(projectName, osName, platformName, snapshot)
+	resultName, err := template.GetName(projectName)
+	if err != nil {
+		return "", errors.Wrap(err, "unable to execute template")
+	}
+	binaryName, err := createProjectName(resultName, osName, platformName, snapshot)
 	if err != nil {
 		return "", errors.Wrap(err, "unable to create project name")
 	}

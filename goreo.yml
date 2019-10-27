@@ -1,8 +1,7 @@
 before:
   - go test
-  - go mod
 build:
-  name: goreo
+  name: "{{ .Name }}"
   snapshot: true
 checksum:
   name: fun
