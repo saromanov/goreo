@@ -3,6 +3,8 @@ package template
 import (
 	"bytes"
 	"text/template"
+
+	"github.com/saromanov/goreo/internal/utils"
 )
 
 type Input struct {
@@ -14,7 +16,9 @@ type Input struct {
 
 // GetName returns current name based on template
 func GetName(tmpl string) (string, error) {
-	inp := &Input{}
+	inp := &Input{
+		Name: utils.GetProjectName(),
+	}
 	t, err := template.New("goreo").Parse(tmpl)
 	if err != nil {
 		return "", err

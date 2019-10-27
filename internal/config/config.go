@@ -1,11 +1,9 @@
 package config
 
 import (
-	"fmt"
 	"io/ioutil"
-	"os"
-	"strings"
 
+	"github.com/saromanov/goreo/internal/utils"
 	"gopkg.in/yaml.v2"
 )
 
@@ -47,23 +45,8 @@ func (c *Config) GetBuild() *Build {
 
 func makeDefaultBuild() *Build {
 	return &Build{
-		Name: getProjectName(),
+		Name: utils.GetProjectName(),
 	}
-}
-
-// if project name is not defined, then
-// get name of the working directory
-func getProjectName() string {
-	dirPath, err := os.Getwd()
-	if err != nil {
-		panic(fmt.Sprintf("unable to get directory path: %v", err))
-	}
-	splitDirs := strings.Split(dirPath, "/")
-	if len(splitDirs) > 0 {
-		dirPath = splitDirs[len(splitDirs)-1]
-	}
-
-	return dirPath
 }
 
 func (c *Config) GetPublish() *Publish {
