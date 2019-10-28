@@ -45,7 +45,10 @@ func (c *Config) GetBuild() *Build {
 
 func makeDefaultBuild() *Build {
 	return &Build{
-		Name: utils.GetProjectName(),
+		Name:      utils.GetProjectName(),
+		Archs:     []string{"linux", "windows"},
+		Platforms: []string{"amd64"},
+		Goarm:     []string{"6"},
 	}
 }
 
