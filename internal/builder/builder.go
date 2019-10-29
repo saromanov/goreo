@@ -36,7 +36,7 @@ func Run(c *config.Build) ([]string, error) {
 func buildToArch(projectName, osName, platformName string, snapshot bool) (string, error) {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
-	resultName, err := template.GetName(projectName, osName)
+	resultName, err := template.GetName(projectName, osName, platformName)
 	if err != nil {
 		return "", errors.Wrap(err, "unable to execute template")
 	}
