@@ -2,6 +2,7 @@ package archive
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/pierrre/archivefile/zip"
 	"github.com/pkg/errors"
@@ -19,6 +20,29 @@ func Run(path string, targetPath, fileName string) error {
 	})
 	if err != nil {
 		return errors.Wrap(err, "unable to archive file")
+	}
+
+	if err := removeContentFromDirectory(targetPath); err != nil {
+		return errors.Wrap(err, "unable to remove files")
+	}
+	return nil
+}
+
+func removeContentFromDirectory(dir string) error {
+	d, err := os.Open(dir)
+	if err != nil {
+		return err
+	}
+	defer d.Close()
+	names, err := d.Readdirnames(-1)
+	if err != nil {
+		return err
+	}
+	for _, name := range names {
+		err = os.RemoveAll(filepath.Join(dir, name))
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
