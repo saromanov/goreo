@@ -27,7 +27,7 @@ func New(c *config.Config) *Pipeline {
 
 // Run provides executing of the builder
 func (p *Pipeline) Run() error {
-	err := p.executeBefore(p.conf.Before)
+	err := p.execute(p.conf.Before)
 	if err != nil {
 		return err
 	}
@@ -41,13 +41,16 @@ func (p *Pipeline) Run() error {
 			return errors.Wrap(err, "unable to archive files")
 		}
 	}
+	if err := p.execute(p.conf.After); err != nil {
+		return errors.Wrap(err, "unable to apply execute after")
+	}
 
 	return nil
 }
 
-// executeBefore provides executing of the command
+// execute provides executing of the command
 // before start of the pipeline
-func (p *Pipeline) executeBefore(commands []string) error {
+func (p *Pipeline) execute(commands []string) error {
 	if len(commands) == 0 {
 		return nil
 	}

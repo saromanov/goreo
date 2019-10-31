@@ -9,9 +9,10 @@ import (
 
 // Config defines configuration for builders
 type Config struct {
-	// Before provides executing of commands before
+	// Before/After provides executing of commands before/after
 	// starting of the pipeline
 	Before   []string  `yaml:"before"`
+	After    []string  `yaml:"after"`
 	Build    *Build    `yaml:"build"`
 	Publish  *Publish  `yaml:"publish"`
 	Archive  *Archive  `yaml:"archive"`
