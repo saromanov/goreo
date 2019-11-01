@@ -33,7 +33,7 @@ func (p *Pipeline) Run() error {
 	}
 	names, err := p.getPaths()
 	if err != nil {
-		return errors.Wrap(err, "unable to apply build")
+		return errors.Wrap(err, "unable to get paths from build")
 	}
 
 	for _, name := range names {
