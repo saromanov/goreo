@@ -9,3 +9,5 @@ build:
 checksum:
   name: fun
   algorithm: sha256
+archive:
+  name: "{{ .Name }}_{{ .Os }}"

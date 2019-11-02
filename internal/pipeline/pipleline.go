@@ -36,9 +36,12 @@ func (p *Pipeline) Run() error {
 		return errors.Wrap(err, "unable to get paths from build")
 	}
 
-	for _, name := range names {
-		if err := p.makeArchive(name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
-			return errors.Wrap(err, "unable to archive files")
+	archive := p.conf.GetArchive()
+	if archive.Name != "" {
+		for _, name := range names {
+			if err := p.makeArchive(name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
+				return errors.Wrap(err, "unable to archive files")
+			}
 		}
 	}
 	if err := p.execute(p.conf.After); err != nil {
@@ -86,7 +89,7 @@ func (p *Pipeline) makeArchive(name string, checksum *config.Checksum, archiveCo
 	}
 	if len(archiveConf.Files) > 0 {
 		for _, fileName := range archiveConf.Files {
-			copyFile(fileName, "../")
+			copyFile(fileName, "./")
 		}
 	}
 
