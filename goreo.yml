@@ -2,6 +2,10 @@
 build:
   name: "{{ .Name }}_{{ .Os }}_{{ .Timestamp }}"
   snapshot: true
+  platforms:
+    - amd64
+  archs:
+    - windows
 checksum:
   name: fun
   algorithm: sha256
