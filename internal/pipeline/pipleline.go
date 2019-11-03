@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/saromanov/goreo/internal/archive"
 	"github.com/saromanov/goreo/internal/builder"
+	"github.com/saromanov/goreo/internal/checksum"
 	"github.com/saromanov/goreo/internal/config"
 )
 
@@ -39,6 +40,11 @@ func (p *Pipeline) Run() error {
 	archive := p.conf.GetArchive()
 	if archive.Name != "" {
 		for i, name := range result.FilePaths {
+			resultSum, err := checksum.Run(p.conf.Checksum.Algorithm, name)
+			if err != nil {
+				return errors.Wrap(err, "unable to calc checksum")
+			}
+			fmt.Println("RES: ", resultSum)
 			if err := p.makeArchive(result.ArchivePaths[i], name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
 				return errors.Wrap(err, "unable to archive files")
 			}
