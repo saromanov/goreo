@@ -37,10 +37,9 @@ func (p *Pipeline) Run() error {
 	}
 
 	archive := p.conf.GetArchive()
-	fmt.Println("NAME: ", result.ArchivePaths)
 	if archive.Name != "" {
-		for _, name := range result.FilePaths {
-			if err := p.makeArchive(name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
+		for i, name := range result.FilePaths {
+			if err := p.makeArchive(result.ArchivePaths[i], name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
 				return errors.Wrap(err, "unable to archive files")
 			}
 		}
@@ -80,8 +79,8 @@ func (p *Pipeline) getPaths() (*builder.Response, error) {
 	return builder.Run(p.conf.GetBuild(), p.conf.GetArchive())
 }
 
-func (p *Pipeline) makeArchive(name string, checksum *config.Checksum, archiveConf *config.Archive) error {
-	name = "zrachive.zip"
+func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, archiveConf *config.Archive) error {
+	archiveConf.Files = append(archiveConf.Files, path)
 	if err := os.Mkdir(name, 777); err != nil {
 		return err
 	}
