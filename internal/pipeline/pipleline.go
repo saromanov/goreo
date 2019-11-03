@@ -81,7 +81,7 @@ func (p *Pipeline) getPaths() (*builder.Response, error) {
 
 func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, archiveConf *config.Archive) error {
 	archiveConf.Files = append(archiveConf.Files, path)
-	if err := os.Mkdir(name, 777); err != nil {
+	if err := os.Mkdir(name, 0755); err != nil {
 		return err
 	}
 	fileName := filepath.Base(name)
@@ -106,7 +106,6 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 }
 
 func copyFile(fileName, dest string) error {
-	fmt.Println("FIL: ", fileName, dest)
 	srcFile, err := os.Open(fileName)
 	if err != nil {
 		return errors.Wrap(err, "unable to open file")
