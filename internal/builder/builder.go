@@ -14,8 +14,8 @@ import (
 // Response provides response
 // as a result of executing
 type Response struct {
-	FilePaths   []string
-	ArchivePath string
+	FilePaths    []string
+	ArchivePaths []string
 }
 
 // Run provides building of the project
@@ -24,6 +24,7 @@ func Run(c *config.Build, archive *config.Archive) (*Response, error) {
 	setEnvironmentVariables(c.Envs)
 
 	names := []string{}
+	archiveNames := []string{}
 	for _, a := range c.Archs {
 		if a == "arm" && len(c.Goarm) > 0 {
 			os.Setenv("GOOS", c.Goarm[0])
@@ -34,10 +35,19 @@ func Run(c *config.Build, archive *config.Archive) (*Response, error) {
 				return nil, errors.Wrap(err, fmt.Sprintf("unable to build %s to the platform %s", a, p))
 			}
 			names = append(names, name)
+
+			if archive.Name != "" {
+				resultName, err := template.GetName(c.Name, a, p)
+				if err != nil {
+					return nil, errors.Wrap(err, "unable to execute template")
+				}
+				archiveNames = append(archiveNames, resultName)
+			}
 		}
 	}
 	return &Response{
-		FilePaths: names,
+		FilePaths:    names,
+		ArchivePaths: archiveNames,
 	}, nil
 }
 

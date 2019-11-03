@@ -31,15 +31,15 @@ func (p *Pipeline) Run() error {
 	if err != nil {
 		return err
 	}
-	names, err := p.getPaths()
+	result, err := p.getPaths()
 	if err != nil {
 		return errors.Wrap(err, "unable to get paths from build")
 	}
 
 	archive := p.conf.GetArchive()
-	fmt.Println("NAME: ", archive.Name)
+	fmt.Println("NAME: ", result.ArchivePaths)
 	if archive.Name != "" {
-		for _, name := range names {
+		for _, name := range result.FilePaths {
 			if err := p.makeArchive(name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
 				return errors.Wrap(err, "unable to archive files")
 			}
@@ -76,8 +76,8 @@ func (p *Pipeline) execute(commands []string) error {
 }
 
 // return list of paths
-func (p *Pipeline) getPaths() ([]string, error) {
-	return builder.Run(p.conf.GetBuild())
+func (p *Pipeline) getPaths() (*builder.Response, error) {
+	return builder.Run(p.conf.GetBuild(), p.conf.GetArchive())
 }
 
 func (p *Pipeline) makeArchive(name string, checksum *config.Checksum, archiveConf *config.Archive) error {
