@@ -11,9 +11,16 @@ import (
 	"github.com/saromanov/goreo/internal/template"
 )
 
+// Response provides response
+// as a result of executing
+type Response struct {
+	FilePaths   []string
+	ArchivePath string
+}
+
 // Run provides building of the project
 // It output built paths to all binaries
-func Run(c *config.Build) ([]string, error) {
+func Run(c *config.Build, archive *config.Archive) (*Response, error) {
 	setEnvironmentVariables(c.Envs)
 
 	names := []string{}
@@ -29,7 +36,9 @@ func Run(c *config.Build) ([]string, error) {
 			names = append(names, name)
 		}
 	}
-	return names, nil
+	return &Response{
+		FilePaths: names,
+	}, nil
 }
 
 // buildToArch provides building of the go package to the specific platform

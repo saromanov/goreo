@@ -37,6 +37,7 @@ func (p *Pipeline) Run() error {
 	}
 
 	archive := p.conf.GetArchive()
+	fmt.Println("NAME: ", archive.Name)
 	if archive.Name != "" {
 		for _, name := range names {
 			if err := p.makeArchive(name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
@@ -80,6 +81,7 @@ func (p *Pipeline) getPaths() ([]string, error) {
 }
 
 func (p *Pipeline) makeArchive(name string, checksum *config.Checksum, archiveConf *config.Archive) error {
+	name = "zrachive.zip"
 	if err := os.Mkdir(name, 777); err != nil {
 		return err
 	}
