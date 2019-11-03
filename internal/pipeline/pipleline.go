@@ -90,10 +90,14 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 	}
 	if len(archiveConf.Files) > 0 {
 		for _, fileName := range archiveConf.Files {
-			copyFile(fileName, "./")
+			if err := copyFile(fileName, fmt.Sprintf("./%s/%s", name, fileName)); err != nil {
+				fmt.Println(err)
+				return err
+			}
 		}
 	}
 
+	// create archive and remove temp dir
 	if err := archive.Run("./", name, fileName); err != nil {
 		return errors.Wrap(err, "unable to archive files")
 	}
@@ -102,6 +106,7 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 }
 
 func copyFile(fileName, dest string) error {
+	fmt.Println("FIL: ", fileName, dest)
 	srcFile, err := os.Open(fileName)
 	if err != nil {
 		return err
