@@ -109,24 +109,24 @@ func copyFile(fileName, dest string) error {
 	fmt.Println("FIL: ", fileName, dest)
 	srcFile, err := os.Open(fileName)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to open file")
 	}
 	defer srcFile.Close()
 
 	destFile, err := os.Create(dest)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to create target file")
 	}
 	defer destFile.Close()
 
 	_, err = io.Copy(destFile, srcFile)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to copy file")
 	}
 
 	err = destFile.Sync()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to sync")
 	}
 
 	return nil
