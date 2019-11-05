@@ -3,6 +3,7 @@ package pipeline
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -44,7 +45,10 @@ func (p *Pipeline) Run() error {
 			if err != nil {
 				return errors.Wrap(err, "unable to calc checksum")
 			}
-			fmt.Println("RES: ", resultSum)
+
+			if err := writeChecksum(resultSum); err != nil {
+				return errors.Wrap(err, "unable to write check sum file")
+			}
 			if err := p.makeArchive(result.ArchivePaths[i], name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
 				return errors.Wrap(err, "unable to archive files")
 			}
@@ -135,4 +139,8 @@ func copyFile(fileName, dest string) error {
 	}
 
 	return nil
+}
+
+func writeChecksum(data string) error {
+	return ioutil.WriteFile("checksum.sum", []byte(data), 0644)
 }
