@@ -39,7 +39,18 @@ func (p *Pipeline) Run() error {
 	}
 
 	archive := p.conf.GetArchive()
-	if archive.Name != "" {
+	p.startPipeline(archive, result)
+	if err := p.execute(p.conf.After); err != nil {
+		return errors.Wrap(err, "unable to apply execute after")
+	}
+
+	return nil
+}
+
+func (p *Pipeline) startPipeline(archive *config.Archive, result int)  {
+	if archive.Name == "" {
+		return 
+	}
 		for i, name := range result.FilePaths {
 			resultSum, err := checksum.Run(p.conf.Checksum.Algorithm, name)
 			if err != nil {
@@ -54,11 +65,7 @@ func (p *Pipeline) Run() error {
 			}
 		}
 	}
-	if err := p.execute(p.conf.After); err != nil {
-		return errors.Wrap(err, "unable to apply execute after")
-	}
-
-	return nil
+	
 }
 
 // execute provides executing of the command
