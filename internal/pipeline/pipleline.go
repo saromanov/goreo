@@ -119,6 +119,10 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 		return errors.Wrap(err, "unable to archive files")
 	}
 
+	if err := deleteFiles(archiveConf.Files); err != nil {
+		return errors.Wrap(err, "unable to delete files")
+	}
+
 	return nil
 }
 
@@ -150,4 +154,14 @@ func copyFile(fileName, dest string) error {
 
 func writeChecksum(data string) error {
 	return ioutil.WriteFile("checksum.sum", []byte(data), 0644)
+}
+
+func deleteFiles(files []string) error {
+	for _, f := range files {
+		if err := os.Remove(f); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
