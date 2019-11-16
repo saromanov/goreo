@@ -62,7 +62,9 @@ func (c *Config) GetPublish() *Publish {
 
 func (c *Config) GetArchive() *Archive {
 	if c.Archive == nil {
-		return &Archive{}
+		return &Archive{
+			Path: "./",
+		}
 	}
 	return c.Archive
 }
@@ -93,6 +95,7 @@ type Publish struct {
 type Archive struct {
 	Files []string `yaml:"files"`
 	Name  string   `yaml:"name"`
+	Path  string   `yaml:"path"`
 }
 
 type Checksum struct {
