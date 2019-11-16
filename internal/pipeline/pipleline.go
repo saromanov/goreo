@@ -158,6 +158,7 @@ func writeChecksum(data string) error {
 
 func deleteFiles(files []string) error {
 	for _, f := range files {
+		fmt.Println("FFF: ", f)
 		if err := os.Remove(f); err != nil {
 			return err
 		}
