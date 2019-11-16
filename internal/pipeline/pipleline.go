@@ -116,7 +116,6 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 
 	// create archive and remove temp dir
 	if err := archive.Run("./", name, fileName); err != nil {
-		fmt.Println("ERR: ", err)
 		return errors.Wrap(err, "unable to archive files")
 	}
 
