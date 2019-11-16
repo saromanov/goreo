@@ -10,5 +10,5 @@ checksum:
   name: fun
   algorithm: sha256
 archive:
-  path: "../archives"
+  path: "../archivesss"
   name: "{{ .Name }}_{{ .Os }}"

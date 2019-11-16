@@ -16,6 +16,10 @@ import (
 	"github.com/saromanov/goreo/internal/config"
 )
 
+const (
+	defaultPath = "./"
+)
+
 type Pipeline struct {
 	conf *config.Config
 }
@@ -114,14 +118,26 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 		}
 	}
 
-	archivePath := "./"
+	archivePath := defaultPath
 	if archiveConf.Path != "" {
 		archivePath = archiveConf.Path
 	}
 
 	// create archive and remove temp dir
-	if err := archive.Run(archivePath, name, fileName); err != nil {
+	outArchivePath, err := archive.Run(archivePath, name, fileName)
+	if err != nil {
 		return errors.Wrap(err, "unable to archive files")
+	}
+
+	if archivePath != defaultPath {
+		if err := copyFile(outArchivePath, fmt.Sprintf("%s/%s", archivePath, outArchivePath)); err != nil {
+			fmt.Println(err)
+			return err
+		}
+
+		if err := deleteFiles([]string{fmt.Sprintf("%s/%s", defaultPath, outArchivePath)}); err != nil {
+			return errors.Wrap(err, "unable to delete files")
+		}
 	}
 
 	if err := deleteFiles(archiveConf.Files); err != nil {
@@ -163,7 +179,6 @@ func writeChecksum(data string) error {
 
 func deleteFiles(files []string) error {
 	for _, f := range files {
-		fmt.Println("FFF: ", f)
 		if err := os.Remove(f); err != nil {
 			return err
 		}

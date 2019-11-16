@@ -11,21 +11,24 @@ import (
 
 // Run provides adding of the repository to the
 // zip archive
-func Run(path string, targetPath, fileName string) error {
+func Run(path string, targetPath, fileName string) (string, error) {
+	if err := checkOutpathPath(path); err != nil {
+		return "", err
+	}
 	err := os.MkdirAll(targetPath, os.ModePerm)
 	if err != nil {
-		return errors.Wrap(err, "unable to make temp dir")
+		return "", errors.Wrap(err, "unable to make temp dir")
 	}
 	err = zip.ArchiveFile(targetPath, fileName+".zip", func(archivePath string) {
 	})
 	if err != nil {
-		return errors.Wrap(err, "unable to archive file")
+		return "", errors.Wrap(err, "unable to archive file")
 	}
 
 	if err := removeContentFromDirectory(targetPath); err != nil {
-		return errors.Wrap(err, "unable to remove files")
+		return "", errors.Wrap(err, "unable to remove files")
 	}
-	return nil
+	return fileName + ".zip", nil
 }
 
 func removeContentFromDirectory(dir string) error {
@@ -47,6 +50,20 @@ func removeContentFromDirectory(dir string) error {
 	}
 	if err := os.Remove(dir); err != nil {
 		return errors.Wrap(err, "unable to remove directory")
+	}
+	return nil
+}
+
+// checkOutpathPath provides checking or creating output
+// archive paths
+func checkOutpathPath(path string) error {
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		return nil
+	}
+
+	err := os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		return errors.Wrap(err, "unable to make directory")
 	}
 	return nil
 }
