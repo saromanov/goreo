@@ -16,8 +16,8 @@ func Run(path string, targetPath, fileName string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to make temp dir")
 	}
-
-	err = zip.ArchiveFile(path, fileName, func(archivePath string) {
+	err = zip.ArchiveFile(path, fileName+".zip", func(archivePath string) {
+		fmt.Println("PATH: ", archivePath)
 	})
 	if err != nil {
 		return errors.Wrap(err, "unable to archive file")
