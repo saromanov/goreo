@@ -14,6 +14,7 @@ import (
 	"github.com/saromanov/goreo/internal/builder"
 	"github.com/saromanov/goreo/internal/checksum"
 	"github.com/saromanov/goreo/internal/config"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -43,7 +44,10 @@ func (p *Pipeline) Run() error {
 	}
 
 	archive := p.conf.GetArchive()
-	p.startPipeline(archive, result)
+	if err := p.startPipeline(archive, result); err != nil {
+		log.WithError(err).Error("starting of pipeline")
+		return errors.Wrap(err, "unable to execute pipeline")
+	}
 	if err := p.execute(p.conf.After); err != nil {
 		return errors.Wrap(err, "unable to apply execute after")
 	}
@@ -52,6 +56,7 @@ func (p *Pipeline) Run() error {
 }
 
 func (p *Pipeline) startPipeline(archive *config.Archive, result *builder.Response) error {
+	log.Info("starting of pipeline")
 	if archive.Name == "" {
 		return nil
 	}
@@ -64,6 +69,7 @@ func (p *Pipeline) startPipeline(archive *config.Archive, result *builder.Respon
 		if err := writeChecksum(resultSum); err != nil {
 			return errors.Wrap(err, "unable to write check sum file")
 		}
+		log.Info("making of archive")
 		if err := p.makeArchive(result.ArchivePaths[i], name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
 			return errors.Wrap(err, "unable to archive files")
 		}
