@@ -118,7 +118,7 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 	if len(archiveConf.Files) > 0 {
 		for _, fileName := range archiveConf.Files {
 			if err := copyFile(fileName, fmt.Sprintf("./%s/%s", name, fileName)); err != nil {
-				fmt.Println(err)
+				log.WithError(err).Error("unable to copy file")
 				return err
 			}
 		}
@@ -137,7 +137,7 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 
 	if archivePath != defaultPath {
 		if err := copyFile(outArchivePath, fmt.Sprintf("%s/%s", archivePath, outArchivePath)); err != nil {
-			fmt.Println(err)
+			log.WithError(err).Error("unable to copy file")
 			return err
 		}
 
