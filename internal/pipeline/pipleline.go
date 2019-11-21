@@ -21,6 +21,7 @@ const (
 	defaultPath = "./"
 )
 
+// Pipeline provides implementation of the main pipeline
 type Pipeline struct {
 	conf *config.Config
 }
