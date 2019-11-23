@@ -39,14 +39,14 @@ func (p *Pipeline) Run() error {
 	if err != nil {
 		return err
 	}
-	result, err := p.getPaths()
+	paths, err := p.getPaths()
 	if err != nil {
 		return errors.Wrap(err, "unable to get paths from build")
 	}
 
 	archive := p.conf.GetArchive()
-	if err := p.startPipeline(archive, result); err != nil {
-		log.WithError(err).Error("starting of pipeline")
+	if err := p.startPipeline(archive, paths); err != nil {
+		log.WithError(err).Error("unable to execute pipeline")
 		return errors.Wrap(err, "unable to execute pipeline")
 	}
 	if err := p.execute(p.conf.After); err != nil {
@@ -62,19 +62,20 @@ func (p *Pipeline) startPipeline(archive *config.Archive, result *builder.Respon
 		return nil
 	}
 	for i, name := range result.FilePaths {
-		checksumConf := p.conf.Checksum
+		checksumConf := p.conf.GetChecksum()
+		if checksumConf != nil {
+			log.WithField("fileName", name).Info("Calculating of checksum")
+			resultSum, err := checksum.Run(checksumConf.Algorithm, name)
+			if err != nil {
+				return errors.Wrap(err, "unable to calc checksum")
+			}
 
-		log.WithField("fileName", name).Info("Calculating of checksum")
-		resultSum, err := checksum.Run(checksumConf.Algorithm, name)
-		if err != nil {
-			return errors.Wrap(err, "unable to calc checksum")
-		}
-
-		if err := writeChecksum(resultSum, checksumConf.Name); err != nil {
-			return errors.Wrap(err, "unable to write check sum file")
+			if err := writeChecksum(resultSum, checksumConf.Name); err != nil {
+				return errors.Wrap(err, "unable to write check sum file")
+			}
 		}
 		log.Info("making of archive")
-		if err := p.makeArchive(result.ArchivePaths[i], name, p.conf.GetChecksum(), p.conf.GetArchive()); err != nil {
+		if err := p.makeArchive(result.ArchivePaths[i], name, checksumConf, p.conf.GetArchive()); err != nil {
 			return errors.Wrap(err, "unable to archive files")
 		}
 	}
