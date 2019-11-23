@@ -33,7 +33,11 @@ func New(token, owner, repo string) publisher.Publisher {
 }
 
 func (g *client) CreateRelease(ctx context.Context, req publisher.RepositoryRelease) (*publisher.RepositoryRelease, error) {
-	_, res, err := g.api.Repositories.CreateRelease(context.TODO(), g.Owner, g.Repo, &github.RepositoryRelease{})
+	_, res, err := g.api.Repositories.CreateRelease(context.TODO(), g.Owner, g.Repo, &github.RepositoryRelease{
+		Body:  req.Body,
+		Name:  req.Name,
+		Draft: req.Draft,
+	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create a release")
 	}
