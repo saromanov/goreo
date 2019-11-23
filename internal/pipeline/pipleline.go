@@ -62,12 +62,15 @@ func (p *Pipeline) startPipeline(archive *config.Archive, result *builder.Respon
 		return nil
 	}
 	for i, name := range result.FilePaths {
-		resultSum, err := checksum.Run(p.conf.Checksum.Algorithm, name)
+		checksumConf := p.conf.Checksum
+
+		log.WithField("fileName", name).Info("Calculating of checksum")
+		resultSum, err := checksum.Run(checksumConf.Algorithm, name)
 		if err != nil {
 			return errors.Wrap(err, "unable to calc checksum")
 		}
 
-		if err := writeChecksum(resultSum); err != nil {
+		if err := writeChecksum(resultSum, checksumConf.Name); err != nil {
 			return errors.Wrap(err, "unable to write check sum file")
 		}
 		log.Info("making of archive")
@@ -114,7 +117,7 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 	}
 	fileName := filepath.Base(name)
 	if checksum.Algorithm != "" {
-		archiveConf.Files = append(archiveConf.Files, "checksum.sum")
+		archiveConf.Files = append(archiveConf.Files, checksum.Name)
 	}
 	if len(archiveConf.Files) > 0 {
 		for _, fileName := range archiveConf.Files {
@@ -180,8 +183,8 @@ func copyFile(fileName, dest string) error {
 	return nil
 }
 
-func writeChecksum(data string) error {
-	return ioutil.WriteFile("checksum.sum", []byte(data), 0644)
+func writeChecksum(data, name string) error {
+	return ioutil.WriteFile(name, []byte(data), 0644)
 }
 
 func deleteFiles(files []string) error {
