@@ -111,6 +111,7 @@ func (p *Pipeline) getPaths() (*builder.Response, error) {
 	return builder.Run(p.conf.GetBuild(), p.conf.GetArchive())
 }
 
+// makeArchive provides making of archive before release
 func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, archiveConf *config.Archive) error {
 	archiveConf.Files = append(archiveConf.Files, path)
 	if err := os.Mkdir(name, 0755); err != nil {

@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"os"
 
 	"github.com/saromanov/goreo/internal/config"
 	"github.com/saromanov/goreo/internal/pipeline"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -26,11 +25,13 @@ func main() {
 	app.Action = func(c *cli.Context) error {
 		conf, err := config.Unmarshal("goreo.yml")
 		if err != nil {
-			return fmt.Errorf("unable to unmarshal config: %v", err)
+			log.Fatalf("unable to unmarshal config: %v", err)
 		}
 		if c.Bool(release) {
 			pipe := pipeline.New(conf)
-			pipe.Run()
+			if err := pipe.Run(); err != nil {
+				log.Fatalf("unable to finish pipeline: %v", err)
+			}
 		}
 		return nil
 	}
