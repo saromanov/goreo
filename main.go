@@ -9,15 +9,11 @@ import (
 	"github.com/urfave/cli"
 )
 
-const (
-	release = "release"
-)
-
 func main() {
 	app := cli.NewApp()
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name:  release,
+			Name:  "release",
 			Usage: "releasing of the project",
 		},
 	}
@@ -27,11 +23,9 @@ func main() {
 		if err != nil {
 			log.Fatalf("unable to unmarshal config: %v", err)
 		}
-		if c.Bool(release) {
-			pipe := pipeline.New(conf)
-			if err := pipe.Run(); err != nil {
-				log.Fatalf("unable to finish pipeline: %v", err)
-			}
+		pipe := pipeline.New(conf)
+		if err := pipe.Run(); err != nil {
+			log.Fatalf("unable to finish pipeline: %v", err)
 		}
 		return nil
 	}

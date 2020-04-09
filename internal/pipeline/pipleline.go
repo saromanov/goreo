@@ -115,7 +115,7 @@ func (p *Pipeline) getPaths() (*builder.Response, error) {
 func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, archiveConf *config.Archive) error {
 	archiveConf.Files = append(archiveConf.Files, path)
 	if err := os.Mkdir(name, 0755); err != nil {
-		return err
+		return fmt.Errorf("unable to create dir: %s %v", name, err)
 	}
 	fileName := filepath.Base(name)
 	if checksum.Algorithm != "" {
