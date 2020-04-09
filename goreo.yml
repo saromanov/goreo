@@ -12,3 +12,5 @@ checksum:
 archive:
   path: "../archivesss"
   name: "{{ .Name }}_{{ .Os }}"
+before:
+  - date
