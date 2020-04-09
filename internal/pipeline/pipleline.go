@@ -70,7 +70,7 @@ func (p *Pipeline) startPipeline(archive *config.Archive, result *builder.Respon
 				return errors.Wrap(err, "unable to calc checksum")
 			}
 
-			if err := writeChecksum(resultSum, checksumConf.Name); err != nil {
+			if err := ioutil.WriteFile(checksumConf.Name, []byte(resultSum), 0644); err != nil {
 				return errors.Wrap(err, "unable to write check sum file")
 			}
 		}
@@ -78,8 +78,21 @@ func (p *Pipeline) startPipeline(archive *config.Archive, result *builder.Respon
 		if err := p.makeArchive(result.ArchivePaths[i], name, checksumConf, p.conf.GetArchive()); err != nil {
 			return errors.Wrap(err, "unable to archive files")
 		}
+
+		if err := deleteFiles(result.ArchivePaths); err != nil {
+			return errors.Wrap(err, "unable to delete files")
+		}
 	}
 
+	return nil
+}
+
+// failedPipeline  is a proxy for failed piplenes
+// which provides deleting of exist files
+func (p *Pipeline) failedPipeline(err error, archivePaths *config.Archive) error {
+	if len(archivePaths.Files) == 0 {
+		return err
+	}
 	return nil
 }
 
@@ -152,10 +165,6 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 		}
 	}
 
-	if err := deleteFiles(archiveConf.Files); err != nil {
-		return errors.Wrap(err, "unable to delete files")
-	}
-
 	return nil
 }
 
@@ -185,10 +194,7 @@ func copyFile(fileName, dest string) error {
 	return nil
 }
 
-func writeChecksum(data, name string) error {
-	return ioutil.WriteFile(name, []byte(data), 0644)
-}
-
+// deleteFiles provides deleting of list of files
 func deleteFiles(files []string) error {
 	for _, f := range files {
 		if err := os.Remove(f); err != nil {
