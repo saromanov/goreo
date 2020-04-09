@@ -86,6 +86,7 @@ type Build struct {
 	Platforms []string               `yaml:"platforms"`
 	Version   string                 `yaml:"version"`
 	Goarm     []string               `yaml:"goarm"`
+	Flags     []string               `yaml:"flags"`
 }
 
 type Publish struct {

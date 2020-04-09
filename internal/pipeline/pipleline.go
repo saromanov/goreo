@@ -36,6 +36,7 @@ func New(c *config.Config) *Pipeline {
 }
 
 // Run provides executing of the builder
+// first its starting to execute before hooks
 func (p *Pipeline) Run() error {
 	err := p.execute(p.conf.Before)
 	if err != nil {
@@ -54,7 +55,7 @@ func (p *Pipeline) Run() error {
 	if err := p.execute(p.conf.After); err != nil {
 		return errors.Wrap(err, "unable to apply execute after")
 	}
-
+	log.Println("pipeline is finished")
 	return nil
 }
 
@@ -72,7 +73,7 @@ func (p *Pipeline) startPipeline(archive *config.Archive, result *builder.Respon
 				return p.failedPipeline(errors.Wrap(err, "unable to calc checksum"), p.tmpFiles)
 			}
 
-			if err := ioutil.WriteFile(checksumConf.Name+"a", []byte(resultSum), 0644); err != nil {
+			if err := ioutil.WriteFile(checksumConf.Name, []byte(resultSum), 0644); err != nil {
 				return p.failedPipeline(errors.Wrap(err, "unable to write check sum file"), p.tmpFiles)
 			}
 		}

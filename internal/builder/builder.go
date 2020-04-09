@@ -30,7 +30,7 @@ func Run(c *config.Build, archive *config.Archive) (*Response, error) {
 			os.Setenv("GOOS", c.Goarm[0])
 		}
 		for _, p := range c.Platforms {
-			name, err := buildToArch(c.Name, a, p, c.Snapshot)
+			name, err := buildToArch(c.Name, a, p, c.Snapshot, c.Flags)
 			if err != nil {
 				return nil, errors.Wrap(err, fmt.Sprintf("unable to build %s to the platform %s", a, p))
 			}
@@ -52,7 +52,7 @@ func Run(c *config.Build, archive *config.Archive) (*Response, error) {
 }
 
 // buildToArch provides building of the go package to the specific platform
-func buildToArch(projectName, osName, platformName string, snapshot bool) (string, error) {
+func buildToArch(projectName, osName, platformName string, snapshot bool, flags []string) (string, error) {
 	os.Setenv("GOOS", osName)
 	os.Setenv("GOARCH", platformName)
 	resultName, err := template.GetName(projectName, osName, platformName)
@@ -63,7 +63,11 @@ func buildToArch(projectName, osName, platformName string, snapshot bool) (strin
 	if err != nil {
 		return "", errors.Wrap(err, "unable to create project name")
 	}
-	err = exec.Command("go", "build", "-o", binaryName).Run()
+	args := []string{"build", "-o", binaryName}
+	if len(flags) > 0 {
+		args = append(args, flags...)
+	}
+	err = exec.Command("go", args...).Run()
 	if err != nil {
 		return "", errors.Wrap(err, "unable to execute go build")
 	}
