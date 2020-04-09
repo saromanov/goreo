@@ -23,13 +23,15 @@ const (
 
 // Pipeline provides implementation of the main pipeline
 type Pipeline struct {
-	conf *config.Config
+	conf     *config.Config
+	tmpFiles []string
 }
 
 // New initialize new pipleline
 func New(c *config.Config) *Pipeline {
 	return &Pipeline{
-		conf: c,
+		conf:     c,
+		tmpFiles: []string{},
 	}
 }
 
@@ -67,19 +69,19 @@ func (p *Pipeline) startPipeline(archive *config.Archive, result *builder.Respon
 			log.WithField("fileName", name).Info("Calculating of checksum")
 			resultSum, err := checksum.Run(checksumConf.Algorithm, name)
 			if err != nil {
-				return p.failedPipeline(errors.Wrap(err, "unable to calc checksum"), result.ArchivePaths)
+				return p.failedPipeline(errors.Wrap(err, "unable to calc checksum"), p.tmpFiles)
 			}
 
-			if err := ioutil.WriteFile(checksumConf.Name, []byte(resultSum), 0644); err != nil {
-				return p.failedPipeline(errors.Wrap(err, "unable to write check sum file"), result.ArchivePaths)
+			if err := ioutil.WriteFile(checksumConf.Name+"a", []byte(resultSum), 0644); err != nil {
+				return p.failedPipeline(errors.Wrap(err, "unable to write check sum file"), p.tmpFiles)
 			}
 		}
 		log.Info("making of archive")
 		if err := p.makeArchive(result.ArchivePaths[i], name, checksumConf, p.conf.GetArchive()); err != nil {
-			return errors.Wrap(err, "unable to archive files")
+			return p.failedPipeline(errors.Wrap(err, "unable to archive files"), p.tmpFiles)
 		}
 
-		if err := deleteFiles(result.ArchivePaths); err != nil {
+		if err := cleanUpFiles(p.tmpFiles); err != nil {
 			return errors.Wrap(err, "unable to delete files")
 		}
 	}
@@ -93,7 +95,7 @@ func (p *Pipeline) failedPipeline(err error, archivePaths []string) error {
 	if len(archivePaths) == 0 {
 		return err
 	}
-	return nil
+	return cleanUpFiles(archivePaths)
 }
 
 // execute provides executing of the command
@@ -134,6 +136,7 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 	if checksum.Algorithm != "" {
 		archiveConf.Files = append(archiveConf.Files, checksum.Name)
 	}
+	p.tmpFiles = append(p.tmpFiles, archiveConf.Files...)
 	if len(archiveConf.Files) > 0 {
 		for _, fileName := range archiveConf.Files {
 			if err := copyFile(fileName, fmt.Sprintf("./%s/%s", name, fileName)); err != nil {
@@ -160,7 +163,7 @@ func (p *Pipeline) makeArchive(name, path string, checksum *config.Checksum, arc
 			return err
 		}
 
-		if err := deleteFiles([]string{fmt.Sprintf("%s/%s", defaultPath, outArchivePath)}); err != nil {
+		if err := cleanUpFiles([]string{fmt.Sprintf("%s/%s", defaultPath, outArchivePath)}); err != nil {
 			return errors.Wrap(err, "unable to delete files")
 		}
 	}
@@ -194,8 +197,8 @@ func copyFile(fileName, dest string) error {
 	return nil
 }
 
-// deleteFiles provides deleting of list of files
-func deleteFiles(files []string) error {
+// cleanUpFiles provides deleting of list of files
+func cleanUpFiles(files []string) error {
 	for _, f := range files {
 		if err := os.Remove(f); err != nil {
 			log.Errorf("unable to delete file: %s %v", f, err)
