@@ -10,5 +10,5 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/urfave/cli v1.22.1
 	golang.org/x/oauth2 v0.0.0-20191122200657-5d9234df094c
-	gopkg.in/yaml.v2 v2.2.2
+	gopkg.in/yaml.v2 v2.2.8
 )
