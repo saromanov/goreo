@@ -3,7 +3,6 @@ package config
 import (
 	"io/ioutil"
 
-	"github.com/saromanov/goreo/internal/utils"
 	"gopkg.in/yaml.v2"
 )
 
@@ -46,7 +45,7 @@ func (c *Config) GetBuild() *Build {
 
 func makeDefaultBuild() *Build {
 	return &Build{
-		Name:      utils.GetProjectName(),
+		Name:      "project",
 		Archs:     []string{"linux", "windows"},
 		Platforms: []string{"amd64"},
 		Goarm:     []string{"6"},
