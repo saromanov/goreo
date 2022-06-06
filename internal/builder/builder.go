@@ -76,13 +76,14 @@ func buildToArch(projectName, osName, platformName string, snapshot bool, flags 
 
 func createProjectName(projectName, platformName string, snapshot bool) (string, error) {
 	binaryName := fmt.Sprintf("%s_%s", projectName, platformName)
-	if snapshot {
-		commit, err := git.GetLastCommitID()
-		if err != nil {
-			return "", errors.Wrap(err, "unable to get last commit id")
-		}
-		binaryName = fmt.Sprintf("%s_%s_%s", projectName, commit, platformName)
+	if !snapshot {
+		return binaryName, nil
 	}
+	commit, err := git.GetLastCommitID()
+	if err != nil {
+		return "", errors.Wrap(err, "unable to get last commit id")
+	}
+	binaryName = fmt.Sprintf("%s_%s_%s", projectName, commit, platformName)
 
 	return binaryName, nil
 }

@@ -111,8 +111,6 @@ func (p *Pipeline) execute(commands []string) error {
 		if len(commandsSplit) == 0 {
 			continue
 		}
-		fmt.Println("COMMAND: ", commandsSplit[0])
-		fmt.Println("COMMA: ", commandsSplit[1:])
 		out, err := exec.Command(commandsSplit[0], commandsSplit[1:]...).Output()
 		if err != nil {
 			return errors.Wrap(err, "unable to execute command")

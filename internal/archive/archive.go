@@ -19,7 +19,8 @@ func Run(path string, targetPath, fileName string) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "unable to make temp dir")
 	}
-	err = zip.ArchiveFile(targetPath, fileName+".zip", func(archivePath string) {
+	fileName = fileName + "zip"
+	err = zip.ArchiveFile(targetPath, fileName, func(archivePath string) {
 	})
 	if err != nil {
 		return "", errors.Wrap(err, "unable to archive file")
@@ -28,7 +29,7 @@ func Run(path string, targetPath, fileName string) (string, error) {
 	if err := removeContentFromDirectory(targetPath); err != nil {
 		return "", errors.Wrap(err, "unable to remove files")
 	}
-	return fileName + ".zip", nil
+	return fileName, nil
 }
 
 func removeContentFromDirectory(dir string) error {
