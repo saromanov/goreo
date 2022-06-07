@@ -10,7 +10,7 @@ import (
 )
 
 // Run provides adding of the repository to the
-// zip archive
+// zip archive and packaging
 func Run(path string, targetPath, fileName string) (string, error) {
 	if err := checkOutpathPath(path); err != nil {
 		return "", err
@@ -25,7 +25,6 @@ func Run(path string, targetPath, fileName string) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "unable to archive file")
 	}
-
 	if err := removeContentFromDirectory(targetPath); err != nil {
 		return "", errors.Wrap(err, "unable to remove files")
 	}
