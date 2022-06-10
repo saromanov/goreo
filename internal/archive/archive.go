@@ -22,6 +22,7 @@ func Run(path string, targetPath, fileName string) (string, error) {
 	fileName = fileName + "zip"
 	err = zip.ArchiveFile(targetPath, fileName, func(archivePath string) {
 	})
+	// update
 	if err != nil {
 		return "", errors.Wrap(err, "unable to archive file")
 	}

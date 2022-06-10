@@ -12,7 +12,10 @@ func Run(algorithm, path string) (string, error) {
 	if algorithm == "" {
 		return "", nil
 	}
-	return calcSha256(path)
+	if algorithm == "sha256" {
+		return calcSha256(path)
+	}
+	return "", fmt.Errorf("unknown algorithm")
 }
 
 func calcSha256(path string) (string, error) {
