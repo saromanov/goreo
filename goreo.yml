@@ -6,6 +6,7 @@ build:
     - amd64
   archs:
     - windows
+    - linux 
 checksum:
   name: fun
   algorithm: sha256

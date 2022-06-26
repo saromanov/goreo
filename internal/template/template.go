@@ -9,6 +9,7 @@ import (
 	"github.com/saromanov/goreo/internal/utils"
 )
 
+const projectName = "goreo"
 type Input struct {
 	Name      string
 	Os        string
@@ -32,7 +33,7 @@ func GetName(tmpl, osName, platform string) (string, error) {
 		Timestamp: fmt.Sprintf("%d", time.Now().Unix()),
 		Platform:  platform,
 	}
-	t, err := template.New("goreo").Parse(tmpl)
+	t, err := template.New(projectName).Parse(tmpl)
 	if err != nil {
 		return "", err
 	}
