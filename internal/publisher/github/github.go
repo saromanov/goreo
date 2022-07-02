@@ -42,7 +42,7 @@ func (g *client) CreateRelease(ctx context.Context, req publisher.RepositoryRele
 		return nil, errors.Wrap(err, "failed to create a release")
 	}
 
-	if res.StatusCode != http.StatusCreated {
+	if res.StatusCode != http.StatusCreated && res.StatusCode != http.StatusOK {
 		return nil, errors.Errorf("create release: invalid status: %s", res.Status)
 	}
 

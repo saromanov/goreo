@@ -45,6 +45,6 @@ func (artifacts Artifacts) List() []*Artifact {
 
 func (artifacts *Artifacts) Add(a *Artifact) {
 	artifacts.lock.Lock()
-	defer artifacts.lock.Unlock()
 	artifacts.items = append(artifacts.items, a)
+	artifacts.lock.Unlock()
 }
